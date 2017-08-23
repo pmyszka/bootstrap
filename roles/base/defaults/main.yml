@@ -1,0 +1,35 @@
+---
+macos_homebrew_packages:
+  - gpg
+  - git
+  - mercurial
+  - zsh
+  - antigen
+  - stow
+  - vim
+  - wget
+
+macos_cask_packages:
+  - caffeine
+  - yujitach-menumeters
+  - flux
+  - google-backup-and-sync
+  - macs-fan-control
+  - spectacle
+  - tunnelblick
+
+  - google-chrome
+  - spotify
+  - vlc
+
+  - atom
+
+debian_apt_packages:
+  - gpa
+  - gnupg2
+  - git
+  - mercurial
+  - vim
+  - zsh
+  - zsh-antigen
+  - stow

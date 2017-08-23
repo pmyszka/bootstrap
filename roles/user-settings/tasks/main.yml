@@ -1,0 +1,24 @@
+---
+- name: install .dotfiles
+  git:
+    repo: "{{ dotfiles_repository }}"
+    dest: "{{ dotfiles_home }}"
+    accept_hostkey: true
+
+- name: run gnu stow
+  command: stow -d {{ dotfiles_home }} -t {{ user_home }} git hg misc ssh vim zsh
+
+- name: run set-user-defaults.sh
+  script: "{{ dotfiles_home }}/macos/set-user-defaults.sh"
+  when: ansible_os_family == "Darwin"
+  changed_when: false
+
+- name: run chsh -s /usr/bin/zsh {{ ansible_user }}
+  command: chsh -s /usr/bin/zsh {{ ansible_user }}
+  when: ansible_os_family == "Debian"
+  changed_when: false
+  become: yes
+
+- name: run chsh -s /usr/local/bin/zsh
+  command: chsh -s /usr/local/bin/zsh
+  when: ansible_os_family == "Darwin"

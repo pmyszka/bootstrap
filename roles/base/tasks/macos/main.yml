@@ -1,0 +1,31 @@
+---
+- name: run set-system-defaults.sh
+  script: "{{ bootstrap_home }}/roles/base/files/macos/set-system-defaults.sh"
+  become: yes
+  become_method: sudo
+  changed_when: false
+
+- name: install macos_homebrew_packages
+  homebrew:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ macos_homebrew_packages }}"
+
+# some custom treatment
+- include: zsh.yml
+
+- name: install caskroom/cask
+  homebrew_tap:
+    tap: caskroom/cask
+    state: present
+
+- name: install caskroom/versions
+  homebrew_tap:
+    tap: caskroom/versions
+    state: present
+
+- name: install macos_cask_packages
+  homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ macos_cask_packages }}"

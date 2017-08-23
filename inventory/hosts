@@ -1,0 +1,16 @@
+[local]
+localhost
+
+[local:vars]
+ansible_connection=local
+
+[remote]
+
+[remote:vars]
+ansible_connection=ssh
+
+[vagrant]
+192.168.42.2
+
+[vagrant:vars]
+ansible_user=vagrant

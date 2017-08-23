@@ -1,0 +1,1 @@
+ansible-playbook -i ~/.bootstrap/inventory/hosts ~/.bootstrap/bootstrap-local.yml --ask-become-pass

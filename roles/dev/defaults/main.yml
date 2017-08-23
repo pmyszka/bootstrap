@@ -1,0 +1,15 @@
+---
+macos_cask_packages_dev:
+  - sourcetree
+  - postman
+  - vagrant
+  - vagrant-manager
+  - virtualbox
+
+macos_homebrew_packages_java:
+  - maven
+  - jenv
+
+macos_cask_packages_java:
+  - intellij-idea-ce
+  - java

@@ -1,0 +1,23 @@
+---
+- block:
+  - name: create ~/bin
+    file:
+      path: "{{ user_home }}/bin"
+      state: directory
+
+  - name: download leiningen
+    get_url:
+      url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+      dest: ~/bin/lein
+      mode: 0554
+
+  - name: install leiningen
+    shell: "~/bin/lein"
+  when: ansible_os_family == "Debian"
+
+- block:
+  - name: install leiningen
+    homebrew:
+      name: leiningen
+      state: latest
+  when: ansible_os_family == "Darwin"

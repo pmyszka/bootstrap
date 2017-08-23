@@ -1,0 +1,12 @@
+---
+- name: set up remote environment
+  hosts: remote
+
+  vars:
+    user_home: /home/{{ ansible_user }}
+    bootstrap_home: "{{ user_home }}/.bootstrap"
+    dotfiles_home: "{{ user_home }}/.dotfiles""
+
+  roles:
+    - base
+    - user-settings

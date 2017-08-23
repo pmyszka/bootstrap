@@ -1,0 +1,32 @@
+---
+- name: set up vagrant environment
+  hosts: vagrant
+
+  vars:
+    user_home: /home/{{ ansible_user }}
+    bootstrap_home: "{{ user_home }}/.bootstrap"
+    dotfiles_home: "{{ user_home }}/.dotfiles"
+
+  roles:
+    - base
+    - user-settings
+    - dev
+
+  tasks:
+    - name: link settings
+      file:
+        src: /vagrant/{{ item }}
+        dest: /home/vagrant/{{ item }}
+        state: link
+        force: yes
+      with_items:
+        - .aliases.zsh
+        - .zhistory
+
+    - name: modify .localrc
+      lineinfile:
+        dest: /home/vagrant/.localrc
+        line: "{{ item }}"
+        create: yes
+      with_items:
+        - "source .*.zsh"

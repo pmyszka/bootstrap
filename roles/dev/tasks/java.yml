@@ -1,0 +1,84 @@
+---
+- block:
+  - name: install macos_cask_packages_java
+    homebrew_cask:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ macos_cask_packages_java }}"
+
+  - name: install macos_homebrew_packages_java
+    homebrew:
+      name: "{{ item }}"
+      state: latest
+    with_items: "{{ macos_homebrew_packages_java }}"
+
+  - name: list jvms
+    shell: "ls -1 /Library/Java/JavaVirtualMachines/"
+    register: jvms
+    ignore_errors: no
+    changed_when: False
+
+  - name: configure jvms
+    shell: "jenv add /Library/Java/JavaVirtualMachines/{{ item }}/Contents/Home || true"
+    with_items: "{{ jvms.stdout_lines }}"
+    ignore_errors: no
+    register: result
+    changed_when: "'already' not in result.stdout"
+
+  - name: run jenv rehash
+    shell: "jenv rehash"
+    changed_when: False
+  when: ansible_os_family == "Darwin"
+
+- block:
+  - block:
+    - name: install software-properties-common
+      apt:
+        name: software-properties-common
+        state: latest
+
+    - name: install ppa:webupd8team/java
+      apt_repository:
+        repo: "ppa:webupd8team/java"
+
+    - name: configure java8 license
+      debconf:
+        name: "oracle-java8-installer"
+        question: "shared/accepted-oracle-license-v1-1"
+        value: "true"
+        vtype: "select"
+
+    - name: install java
+      apt:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - oracle-java8-installer
+        - ca-certificates
+        - oracle-java8-set-default
+
+    - name: install maven
+      apt:
+        name: maven
+        state: latest
+    become: yes
+
+  - name: install jenv
+    git:
+      repo: https://github.com/gcuisinier/jenv.git
+      dest: "{{ user_home }}/.jenv"
+
+  - name: configure java8
+    shell: "source {{ dotfiles_home }}/zsh/.zsh.d/jenv.zsh && {{ user_home }}/.jenv/bin/jenv add /usr/lib/jvm/java-8-oracle"
+    args:
+      executable: /bin/zsh
+    ignore_errors: yes
+    register: result
+    changed_when: "'is already a' not in result.stdout"
+
+  - name: run jenv rehash
+    shell: "source {{ dotfiles_home }}/zsh/.zsh.d/jenv.zsh && {{ user_home }}/.jenv/bin/jenv rehash"
+    args:
+      executable: /bin/zsh
+    changed_when: False
+  when: ansible_os_family == "Debian"
