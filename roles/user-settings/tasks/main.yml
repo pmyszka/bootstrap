@@ -3,6 +3,7 @@
   git:
     repo: "{{ dotfiles_repository }}"
     dest: "{{ dotfiles_home }}"
+    update: no
     accept_hostkey: true
 
 - name: run gnu stow
@@ -22,3 +23,17 @@
 - name: run chsh -s /usr/local/bin/zsh
   command: chsh -s /usr/local/bin/zsh
   when: ansible_os_family == "Darwin"
+
+- name: skipping ssh-agent default key
+  lineinfile:
+    path: "{{ user_home }}/.zshrc"
+    regexp: 'zstyle :omz:plugins:ssh-agent identities pmyszka'
+    state: absent
+  when: ansible_os_family == "Debian"
+
+- name: changing antigen settings for Debian
+  lineinfile:
+    path: "{{ user_home }}/.zshrc"
+    regexp: 'source /usr/local/share/antigen/antigen.zsh'
+    line: 'source /usr/share/zsh-antigen/antigen.zsh'
+  when: ansible_os_family == "Debian"
