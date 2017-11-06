@@ -10,7 +10,6 @@
   roles:
     - base
     - user-settings
-    - dev
 
   tasks:
     - name: link settings
@@ -22,6 +21,7 @@
       with_items:
         - .aliases.zsh
         - .zhistory
+        - .ssh-agent.zsh
 
     - name: modify .localrc
       lineinfile:
@@ -29,4 +29,4 @@
         line: "{{ item }}"
         create: yes
       with_items:
-        - "source .*.zsh"
+        - "for i in .*.zsh; do source $i; done"
