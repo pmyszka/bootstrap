@@ -48,11 +48,22 @@
         value: "true"
         vtype: "select"
 
+    - name: creating java7 binary dir
+      file:
+        path: /var/cache/oracle-jdk7-installer
+        state: directory
+
+    - name: copying java7 binary
+      copy:
+        src: "~/var/jdk-7u80-linux-x64.tar.gz"
+        dest: "/var/cache/oracle-jdk7-installer/jdk-7u80-linux-x64.tar.gz"
+
     - name: install java
       apt:
         name: "{{ item }}"
         state: latest
       with_items:
+        - oracle-java7-installer
         - oracle-java8-installer
         - ca-certificates
         - oracle-java8-set-default
@@ -67,6 +78,14 @@
     git:
       repo: https://github.com/gcuisinier/jenv.git
       dest: "{{ user_home }}/.jenv"
+
+  - name: configure java7
+    shell: "source {{ dotfiles_home }}/zsh/.zsh.d/jenv.zsh && {{ user_home }}/.jenv/bin/jenv add /usr/lib/jvm/java-7-oracle"
+    args:
+      executable: /bin/zsh
+    ignore_errors: yes
+    register: result
+    changed_when: "'is already a' not in result.stdout"
 
   - name: configure java8
     shell: "source {{ dotfiles_home }}/zsh/.zsh.d/jenv.zsh && {{ user_home }}/.jenv/bin/jenv add /usr/lib/jvm/java-8-oracle"
