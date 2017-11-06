@@ -6,6 +6,6 @@
   with_items: "{{ macos_cask_packages_dev }}"
   when: ansible_os_family == "Darwin"
 
-- include: java.yml
-- include: clojure.yml
+- include_tasks: java.yml
+- include_tasks: clojure.yml
 
