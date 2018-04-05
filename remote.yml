@@ -1,0 +1,15 @@
+---
+- name: set up remote environment
+  hosts: remote
+
+  vars:
+    user_home: /home/{{ ansible_user }}
+    dotfiles_home: "{{ user_home }}/.dotfiles"
+
+  roles:
+    - { role: base, tags: ["bootstrap"] }
+    - { role: base-hardening, tags: ["bootstrap"] }
+
+    - { role: dev, tags: ["dev"] }
+
+    - { role: user-settings, tags: ["dotfiles"] }

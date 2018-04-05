@@ -6,8 +6,8 @@
     update: no
     accept_hostkey: true
 
-- name: run gnu stow
-  command: stow -d {{ dotfiles_home }} -t {{ user_home }} git hg misc ssh vim zsh
+- name: setup dotfiles
+  command: sh {{ dotfiles_home }}/setup.sh
 
 - name: run set-user-defaults.sh
   script: "{{ dotfiles_home }}/macos/set-user-defaults.sh"
@@ -16,7 +16,7 @@
 
 - name: run chsh -s /usr/bin/zsh {{ ansible_user }}
   command: chsh -s /usr/bin/zsh {{ ansible_user }}
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" or ansible_os_family == "OSMC"
   changed_when: false
   become: yes
 
@@ -29,11 +29,12 @@
     path: "{{ user_home }}/.zshrc"
     regexp: 'zstyle :omz:plugins:ssh-agent identities pmyszka'
     state: absent
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" or ansible_os_family == "OSMC"
 
 - name: changing antigen settings for Debian
   lineinfile:
     path: "{{ user_home }}/.zshrc"
     regexp: 'source /usr/local/share/antigen/antigen.zsh'
     line: 'source /usr/share/zsh-antigen/antigen.zsh'
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" or ansible_os_family == "OSMC"
+

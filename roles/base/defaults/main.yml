@@ -13,16 +13,14 @@ macos_cask_packages:
   - caffeine
   - yujitach-menumeters
   - flux
-  - google-backup-and-sync
   - macs-fan-control
   - spectacle
   - tunnelblick
 
   - google-chrome
+  - google-backup-and-sync
   - spotify
   - vlc
-
-  - atom
 
 debian_apt_packages:
   - gpa

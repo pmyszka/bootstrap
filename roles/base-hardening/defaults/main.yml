@@ -1,0 +1,11 @@
+---
+sshd: ssh
+sshd_config: /etc/ssh/sshd_config
+
+username: "{{ lookup('env', 'USER') }}"
+
+allowed_networks:
+  - "ALL"
+
+remote_access_key: |
+  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLuuM75Fd0pNR4dBOmy2XIX/cvVMYr1dDdwBLAi2gHJJQZSjNNavsUHJs5ujKILHC92MZI6qX0msTMaMHrtmbGXksjRp9RuTyHqEda8lsQUSyctQRdNvpzCfgeSwpiIPiscihFqGwDL4bwX9BEKN/HcA3qzQHqVvD82BBpwhO+UMqcc3sdjS+2WI3AH5YxAOUU4FQefd8LMKroQWJfYsul5dzlhKQE/UUguwqdGVwuipEHHvsUAw1wrj137xrO7YR2kyWdNzcELS72udOWhBC6SXd42jBJabTwIoPlYTKDIU3s6vHmmZ2JfwRLrqh4Xulh87k/Rbvp/33RE3XEKfXj pmyszka@m

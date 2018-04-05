@@ -11,5 +11,6 @@ macos_homebrew_packages_java:
   - jenv
 
 macos_cask_packages_java:
-  - intellij-idea-ce
+  - intellij-idea
+  - java8
   - java

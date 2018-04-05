@@ -1,0 +1,81 @@
+---
+- name: creating user account
+  user:
+    shell: /bin/bash
+    name: "{{ username }}"
+    comment: "{{ username }}"
+  become: yes
+
+- name: add user to staff group
+  user:
+    name: "{{ username }}"
+    groups: staff
+    append: yes
+  become: yes
+
+- name: create authorized_key entry
+  authorized_key:
+    user: "{{ username }}"
+    key: "{{ remote_access_key }}"
+  register: add_identity_key
+  when: remote_access_key != ""
+  become: yes
+
+- name: updating sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    line: "{{ username }} ALL=(ALL) NOPASSWD:ALL"
+  become: yes
+
+- block:
+  - name: create hosts.allow
+    lineinfile:
+      dest: /etc/hosts.allow
+      line: 'SSHD: {{ item }}'
+    with_items:
+      - "{{ allowed_networks }}"
+
+  - name: create hosts.deny
+    lineinfile:
+      dest: /etc/hosts.deny
+      regexp: ^SSHD
+      line: "SSHD: ALL"
+  become: yes
+
+- block:
+  - name: configure PermitEmptyPasswords
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      regexp: "^#?PermitEmptyPasswords"
+      line: "PermitEmptyPasswords no"
+
+  - name: permit login only for user {{ ansible_user }}
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      regexp: "^#?AllowUsers"
+      line: "AllowUsers {{ username }}"
+
+  - name: configure PermitRootLogin
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      regexp: "^#?PermitRootLogin"
+      line: "PermitRootLogin no"
+
+  - name: configure PasswordAuthentication
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      regexp: "^#?PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    when: add_identity_key is success and not add_identity_key is skipped
+
+  - name: configure UsePAM
+    lineinfile:
+      dest: "{{ sshd_config }}"
+      regexp: "^#?UsePAM"
+      line: "UsePAM no"
+
+  - name: restart sshd.service
+    service:
+      name: "{{ sshd }}"
+      state: restarted
+  become: yes

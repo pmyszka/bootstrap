@@ -8,5 +8,6 @@
     dotfiles_home: "{{ user_home }}/.dotfiles"
 
   roles:
-    - base
-    - user-settings
+    - { role: base, tags: ["bootstrap"] }
+    - { role: dev, tags: ["dev"] }
+    - { role: user-settings, tags: ["always"] }
